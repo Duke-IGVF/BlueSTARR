@@ -28,7 +28,7 @@ from keras.models import Sequential, Model
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, History, ModelCheckpoint
 import keras.backend as backend
-from keras.backend import int_shape
+# from keras.backend import int_shape
 import pandas as pd
 import numpy as np
 import sys

@@ -21,7 +21,7 @@ from keras.models import Sequential, Model
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, History, ModelCheckpoint
 import keras.backend as backend
-from keras.backend import int_shape
+# from keras.backend import int_shape
 import pandas as pd
 import numpy as np
 import ProgramName
@@ -142,6 +142,14 @@ def naiveCorrelation(y_true, y_pred, taskNum, numTasks):
 #========================================================================
 #                               FUNCTIONS
 #========================================================================
+
+## keras.backend.int_shape() got dropped after v2.15
+def int_shape(x):
+    s = x.shape
+    if not isinstance(s, tuple):
+        s = tuple(s.as_list())
+    return s
+
 def log(x):
     return tf.math.log(x)
 
