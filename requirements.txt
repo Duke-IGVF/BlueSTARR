@@ -2,5 +2,5 @@ tensorflow[and-cuda]
 pandas
 scikit-learn
 silence-tensorflow
-keras-nlp==0.4.0
+keras-nlp
 git+https://github.com/Duke-GCB/majoros-python-utils.git
