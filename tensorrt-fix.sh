@@ -24,8 +24,13 @@ if python3 -c "import tensorrt_libs" &> /dev/null; then
         echo "Builder library version is the same as the main library, skipping fix."
     else
         for lib in $tensorrt_lib/lib*.so.${vinfer} ; do
-            echo "Creating symbolic link with version ${vinfer}${vbuilderdiff} for "$(basename $lib)
-            ln -s $lib $tensorrt_lib/$(basename $lib)${vbuilderdiff}
+            # test whether target already exists
+            if [ -e $lib${vbuilderdiff} ]; then
+                echo "${vinfer}${vbuilderdiff} for "$(basename $lib)" exists, skipping."
+            else
+                echo "Creating symbolic link with version ${vinfer}${vbuilderdiff} for "$(basename $lib)
+                ln -s $lib $lib${vbuilderdiff}
+            fi
         done
     fi
 else
