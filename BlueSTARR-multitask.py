@@ -108,10 +108,11 @@ def main(configFile,subdir,modelFilestem):
     
 def summary_statistics(X, Y, set, taskNum, numTasks, taskName, model):
     pred = model.predict(X, batch_size=config.BatchSize)
-    cor=naiveCorrelation(Y,pred,taskNum,numTasks)
+    if (config.useCustomLoss) :
+        cor=naiveCorrelation(Y,pred,taskNum,numTasks)
+    else:
+        cor=stats.spearmanr(tf.math.exp(pred.squeeze()),tf.math.exp(Y))
     print(taskName+" rho=",cor.statistic,"p=",cor.pvalue)
-
-
     
 def naiveCorrelation(y_true, y_pred, taskNum, numTasks):
     a=0
@@ -268,7 +269,7 @@ def loadCounts(filename,maxCases,config):
     for line in IN:
         if type(line) is bytes: line = line.decode("utf-8")
         fields=line.rstrip().split()
-        fields=[int(x) for x in fields]
+        fields=[float(x) for x in fields]
         if(config.useCustomLoss): lines.append(fields)
         else: lines.append(computeNaiveTheta(fields,DNAreps,RNAreps))
         linesRead+=1
@@ -285,10 +286,13 @@ def computeNaiveTheta(line,DNAreps,RNAreps):
         c=b+RNAreps[i]
         DNA=line[a:b] #+1
         RNA=line[b:c] #+1
-        sumX=sum(DNA)+1
-        sumY=sum(RNA)+1
-        naiveTheta=sumY/sumX
-        rec.append(naiveTheta)
+        # sumX=sum(DNA)+1
+        # sumY=sum(RNA)+1
+        # naiveTheta=sumY/sumX
+        avgX = sum(DNA)/DNAreps[i]
+        avgY = sum(RNA)/RNAreps[i]
+        naiveTheta=avgY/avgX
+        rec.append(tf.math.log(naiveTheta))
         a=c
     return rec
 
@@ -407,5 +411,3 @@ if(len(sys.argv)!=4):
     exit(ProgramName.get()+" <parms.config> <data-subdir> <out:model-filestem>\n")
 (configFile,subdir,modelFilestem)=sys.argv[1:]
 main(configFile,subdir,modelFilestem)
-
-
