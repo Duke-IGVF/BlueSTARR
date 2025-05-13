@@ -10,12 +10,20 @@ BlueSTARR: predicting effects of regulatory variants
    # you can also use -n YourEnvName instead of -p /path/to/env
    conda create -p /path/to/new/conda/env -c conda-forge python=3.10
    ```
-2. Install the python dependencies using `pip`:
+2. Activate the conda environment you just created:
+   ```bash
+   conda activate /path/to/new/conda/env
+   ```
+3. Install the python dependencies using `pip`:
    ```bash
    pip install -r requirements.txt
    ```
+   This assumes that you have the repository checked out and are issuing this command from the repo's root directory.
+   You can also do this without the full repository; all that's needed is the following two files:
+   - [`requirements.txt`](requirements.txt)
+   - [`non-tensorflow-reqs.txt`](non-tensorflow-reqs.txt)
 
-### Cloning a previously exported conda environment
+### (Alternative) Cloning a previously exported conda environment
 
 You can “clone” (install every dependency and package at the exact same version, whether there’s a more recent compatible one or not) an existing conda environment by first exporting the configuration of an existing one (either specify it using -n/--name or -p/--prefix, or activate it first) into a file like so:
 ```
