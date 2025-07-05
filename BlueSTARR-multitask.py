@@ -51,7 +51,7 @@ EPSILON=tf.cast(1e-10,tf.float32)
 #=========================================================================
 #                                main()
 #=========================================================================
-def main(configFile,subdir,modelFilestem):
+def main(configFile,subdir,modelFilestem, pretrained=None):
     startTime=time.time()
     #random.seed(RANDOM_SEED)
     
@@ -73,6 +73,9 @@ def main(configFile,subdir,modelFilestem):
 
     # Build model
     model=BuildModel(seqlen)
+    if pretrained:
+        print("Loading pretrained model weights from",pretrained,flush=True)
+        model.load_weights(pretrained)
     model.summary()
 
     # Train
@@ -416,7 +419,12 @@ def train(model,X_train,Y_train,X_valid,Y_valid):
 #=========================================================================
 #                         Command Line Interface
 #=========================================================================
-if(len(sys.argv)!=4):
-    exit(ProgramName.get()+" <parms.config> <data-subdir> <out:model-filestem>\n")
-(configFile,subdir,modelFilestem)=sys.argv[1:]
-main(configFile,subdir,modelFilestem)
+import argparse
+parser = argparse.ArgumentParser(prog=ProgramName.get(), description="Train a BlueSTARR model.")
+parser.add_argument("configFile", help="Configuration file with hyperparameters.")
+parser.add_argument("subdir", help="Subdirectory containing training, validation, and test data.")
+parser.add_argument("modelFilestem", help="File (and path) stem for saving the model.")
+parser.add_argument("--pretrained",  help="Load pretrained model weights from this file.")
+args = parser.parse_args()
+
+main(args.configFile,args.subdir,args.modelFilestem, pretrained=args.pretrained)
