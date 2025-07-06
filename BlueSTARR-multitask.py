@@ -62,11 +62,11 @@ def main(configFile,subdir,modelFilestem):
     # Load data
     print("loading data",flush=True)
     shouldRevComp=config.RevComp==1
-    (X_train_sequence, X_train_seq_matrix, X_train, Y_train) = \
+    (X_train_sequence, X_train_seq_matrix, X_train, Y_train, idx_train) = \
         prepare_input("train",subdir,shouldRevComp,config.MaxTrain,config)
-    (X_valid_sequence, X_valid_seq_matrix, X_valid, Y_valid) = \
+    (X_valid_sequence, X_valid_seq_matrix, X_valid, Y_valid, idx_val) = \
         prepare_input("validation",subdir,shouldRevComp,config.MaxTrain,config)
-    (X_test_sequence, X_test_seq_matrix, X_test, Y_test) = \
+    (X_test_sequence, X_test_seq_matrix, X_test, Y_test, idx_test) = \
         prepare_input("test",subdir,shouldRevComp,config.MaxTest,config) \
         if(config.ShouldTest!=0) else (None, None, None, None)
     seqlen=X_train.shape[1]
@@ -96,7 +96,8 @@ def main(configFile,subdir,modelFilestem):
         numTasks=len(config.Tasks)
         for i in range(numTasks):
             summary_statistics(X_test,Y_test,"Test",i,numTasks,
-                               config.Tasks[i],model)
+                               config.Tasks[i],model,idx_test,modelFilestem)
+    print('Min validation loss:', round(min(history.history['val_loss']), 4))
 
     # Report elapsed time
     endTime=time.time()
@@ -106,24 +107,34 @@ def main(configFile,subdir,modelFilestem):
 
 
     
-def summary_statistics(X, Y, set, taskNum, numTasks, taskName, model):
+def summary_statistics(X, Y, set, taskNum, numTasks, taskName, model, idx, modelFilestem):
     pred = model.predict(X, batch_size=config.BatchSize)
     if (config.useCustomLoss) :
-        cor=naiveCorrelation(Y,pred,taskNum,numTasks)
+        naiveTheta, cor=naiveCorrelation(Y,pred,taskNum,numTasks) # naiveTheta: normal scale, pred: log scale
+        df = pd.DataFrame({'idx':idx, 'true':tf.math.log(naiveTheta),'predicted': pred.squeeze()}) # log scale
+        mse = np.mean((df['true'] - df['predicted'])**2)
+        df.to_csv(modelFilestem+'.txt', index = False, sep='\t')
     else:
         cor=stats.spearmanr(tf.math.exp(pred.squeeze()),tf.math.exp(Y))
+        df = pd.DataFrame({'idx':idx, 'true':Y.numpy().ravel(),'predicted': pred.squeeze()}) # log scale
+        mse = np.mean((df['true'] - df['predicted'])**2)
+        df.to_csv(modelFilestem+'.txt', index = False, sep='\t')
+    
     print(taskName+" rho=",cor.statistic,"p=",cor.pvalue)
+    print(taskName+' mse=', mse)
+
+
     
 def naiveCorrelation(y_true, y_pred, taskNum, numTasks):
     a=0
     for i in range(taskNum): a+=NUM_DNA[i]+NUM_RNA[i]
     b=a+NUM_DNA[taskNum]
     c=b+NUM_RNA[taskNum]
-    DNA=y_true[:,a:b]+1
-    RNA=y_true[:,b:c]+1
-    sumX=tf.reduce_sum(DNA,axis=1)
-    sumY=tf.reduce_sum(RNA,axis=1)
-    naiveTheta=sumY/sumX
+    DNA=y_true[:,a:b] #+1
+    RNA=y_true[:,b:c] #+1
+    avgX = tf.reduce_mean(DNA, axis=1)
+    avgY = tf.reduce_mean(RNA, axis=1)
+    naiveTheta = avgY / avgX
     #print("naiveTheta=",naiveTheta)
     #print("y_pred=",tf.math.exp(y_pred[taskNum].squeeze()))
     cor=None
@@ -131,7 +142,7 @@ def naiveCorrelation(y_true, y_pred, taskNum, numTasks):
         cor=stats.spearmanr(tf.math.exp(y_pred.squeeze()),naiveTheta)
     else:
         cor=stats.spearmanr(tf.math.exp(y_pred[taskNum].squeeze()),naiveTheta)
-    return cor
+    return naiveTheta, cor
 
 #def Spearman(y_true, y_pred):
 #     return ( tf.py_function(spearmanr, [tf.cast(y_pred, tf.float32), 
@@ -252,6 +263,7 @@ def loadFasta(fasta_path, as_dict=False,uppercase=False, stop_at=None,
             rc=generate_complementary_sequence(rec[1])
             rec[1]=rec[1]+"NNNNNNNNNNNNNNNNNNNN"+rc
     return pd.DataFrame({'location': [e[0] for e in fastas],
+                         'idx': [e[0].split(' ')[0] for e in fastas],
                          'sequence': [e[1] for e in fastas]})
 
 
@@ -269,7 +281,7 @@ def loadCounts(filename,maxCases,config):
     for line in IN:
         if type(line) is bytes: line = line.decode("utf-8")
         fields=line.rstrip().split()
-        fields=[float(x) for x in fields]
+        fields=[float(x) for x in fields] # normalized data
         if(config.useCustomLoss): lines.append(fields)
         else: lines.append(computeNaiveTheta(fields,DNAreps,RNAreps))
         linesRead+=1
@@ -284,15 +296,12 @@ def computeNaiveTheta(line,DNAreps,RNAreps):
     for i in range(numTasks):
         b=a+DNAreps[i]
         c=b+RNAreps[i]
-        DNA=line[a:b] #+1
-        RNA=line[b:c] #+1
-        # sumX=sum(DNA)+1
-        # sumY=sum(RNA)+1
-        # naiveTheta=sumY/sumX
-        avgX = sum(DNA)/DNAreps[i]
-        avgY = sum(RNA)/RNAreps[i]
+        DNA=line[a:b] 
+        RNA=line[b:c]
+        avgX=sum(DNA)/DNAreps[i]
+        avgY=sum(RNA)/RNAreps[i]  # normalized data
         naiveTheta=avgY/avgX
-        rec.append(tf.math.log(naiveTheta))
+        rec.append(tf.math.log(naiveTheta)) # log-scale
         a=c
     return rec
 
@@ -314,7 +323,7 @@ def prepare_input(set,subdir,shouldRevComp,maxCases,config):
     NUM_RNA=RNAreps
     matrix=pd.DataFrame(Y)
     matrix=tf.cast(matrix,tf.float32)
-    return (input_fasta_data_A.sequence, seq_matrix_A, X_reshaped, matrix)
+    return (input_fasta_data_A.sequence, seq_matrix_A, X_reshaped, matrix, input_fasta_data_A.idx)
 
  
 def BuildModel(seqlen):
