@@ -128,8 +128,12 @@ class NeuralConfig:
 #=========================================================================
 # main()
 #=========================================================================
-#if(len(sys.argv)!=2):
-#    exit(ProgramName.get()+" <in.config>\n")
-#(infile,)=sys.argv[1:]
-#config=NeuralConfig(infile)
-#config.dump()
+def main():
+    if(len(sys.argv)!=2):
+        exit(ProgramName.get()+" <in.config>\n")
+    (infile,)=sys.argv[1:]
+    config=NeuralConfig(infile)
+    config.dump()
+
+if __name__ == "__main__":
+    main()
