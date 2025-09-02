@@ -379,7 +379,7 @@ def BuildModel(seqlen):
         x = Flatten()(x) # Commented out on 3/22/2023
 
     # dense layers
-    if(config.NumDense>0):
+    if((config.NumDense>0) and config.PreDenseDropout):
         x=Dropout(config.DropoutRate)(x)
     for i in range(config.NumDense):
         x=kl.Dense(config.DenseSizes[i])(x)

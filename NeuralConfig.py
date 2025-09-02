@@ -72,6 +72,9 @@ class NeuralConfig:
         self.NumDense=int(config.lookupOrDie("NumDense"))
         self.DenseSizes=[int(x) for x in config.lookupListOrDie("DenseSizes")]
         self.checkSize("DenseSizes",self.DenseSizes,self.NumDense)
+        self.PreDenseDropout=config.lookup("PreDenseDropout")
+        if(self.PreDenseDropout is None): self.PreDenseDropout=1 # defaults to true!
+        else: self.PreDenseDropout=int(self.PreDenseDropout)
 
         # Parameters pertaining to output and loss
         self.Tasks=config.lookupList("Tasks")
@@ -120,7 +123,8 @@ class NeuralConfig:
         print("DropoutRate=",self.DropoutRate,sep="")
         print("LearningRate=",self.LearningRate,sep="")
         print("ConvDropout=",self.ConvDropout,sep="")
-        
+        print("PreDenseDropout=",self.PreDenseDropout,sep="")
+
 #=========================================================================
 # main()
 #=========================================================================
