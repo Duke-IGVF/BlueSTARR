@@ -163,10 +163,17 @@ def log(x):
 def logGam(x):
     return tf.math.lgamma(x)
 
-def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA):
+def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA,sumDnaLibs=np.nan,RnaLibs=np.nan):
     n=tf.shape(sumX)[0]
     sumX=tf.tile(tf.reshape(sumX,[n,1]),[1,numRNA])
     theta=tf.math.exp(logTheta) # assume the model is predicting log(theta)
+    if np.isnan(sumDnaLibs) or np.isnan(RnaLibs):
+        libRatio = 1.0
+    else:
+        n=tf.shape(sumDnaLibs)[0]
+        sumDnaLibs=tf.tile(tf.reshape(sumDnaLibs,[n,1]),[1,numRNA])
+        libRatio=RnaLibs/sumDnaLibs
+    theta=theta*libRatio
     LL=(sumX+alpha)*log(beta+numX)+logGam(Yj+sumX+alpha)+Yj*log(theta)\
         -logGam(sumX+alpha)-logGam(Yj+1)-(Yj+sumX+alpha)*log(theta+beta+numX)
     return tf.reduce_sum(LL,axis=1) # sum logLik across iid replicates
@@ -174,16 +181,24 @@ def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA):
 @tf.autograph.experimental.do_not_convert
 def makeClosure(taskNum):
     a=0
-    for i in range(taskNum): a+=NUM_DNA[i]+NUM_RNA[i]
-    b=a+NUM_DNA[taskNum]
-    c=b+NUM_RNA[taskNum]
+    for i in range(taskNum): a+=NUM_DNA[i]+NUM_RNA[i] # skip previous tasks
+    b=a+NUM_DNA[taskNum] # first column of RNA counts
+    c=b+NUM_RNA[taskNum] # first column of DNA lib sizes
+    d=c+NUM_DNA[taskNum] # first column of RNA lib sizes
     @tf.autograph.experimental.do_not_convert
     def loss(y_true, y_pred):
         global EPSILON
         DNA=y_true[:,a:b]
         RNA=y_true[:,b:c]
         sumX=tf.reduce_sum(DNA,axis=1)
-        LL=-logLik(sumX,b-a,RNA,y_pred,EPSILON,EPSILON,NUM_RNA[taskNum])
+        if (tf.shape(y_true)[1] > c):
+            DnaLibs=y_true[:,c:d]
+            RnaLibs=y_true[:,d:]
+            sumDnaLibs=tf.reduce_sum(DnaLibs,axis=1)
+            LL=-logLik(sumX,b-a,RNA,y_pred,EPSILON,EPSILON,NUM_RNA[taskNum],
+                       sumDnaLibs,RnaLibs)
+        else:
+            LL=-logLik(sumX,b-a,RNA,y_pred,EPSILON,EPSILON,NUM_RNA[taskNum])
         #return tf.reduce_mean(LL,axis=-1) # Put on same scale as MSE
         #print("pred=",y_pred)
         #print("-LL=",LL)
@@ -206,11 +221,6 @@ def mseClosure(taskNum):
         naiveTheta=sumY/sumX
         mse=tf.math.reduce_mean(tf.math.square(y_pred-tf.math.log(naiveTheta)),
                                 axis=1)
-        #mse=tf.math.reduce_mean(tf.math.square(tf.math.exp(y_pred)-naiveTheta))
-                                ### axis=-1)
-        print("log(naiveTheta)=",tf.math.log(naiveTheta))
-        print("pred=",y_pred)
-        print("mse=",mse)
         return mse
         #cor=stats.spearmanr(tf.math.exp(y_pred[taskNum].squeeze()),naiveTheta)
         #return cor
@@ -284,9 +294,11 @@ def loadCounts(filename,maxCases,config):
     for line in IN:
         if type(line) is bytes: line = line.decode("utf-8")
         fields=line.rstrip().split()
-        fields=[float(x) for x in fields] # normalized data
-        if(config.useCustomLoss): lines.append(fields)
-        else: lines.append(computeNaiveTheta(fields,DNAreps,RNAreps))
+        if(config.useCustomLoss):
+            lines.append([int(x) for x in fields])
+        else:
+            fields=[float(x) for x in fields] # possibly normalized data
+            lines.append(computeNaiveTheta(fields,DNAreps,RNAreps))
         linesRead+=1
         if(linesRead>=maxCases): break
     lines=np.array(lines)
