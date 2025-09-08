@@ -163,11 +163,11 @@ def log(x):
 def logGam(x):
     return tf.math.lgamma(x)
 
-def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA,sumDnaLibs=np.nan,RnaLibs=np.nan):
+def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA,sumDnaLibs=None,RnaLibs=None):
     n=tf.shape(sumX)[0]
     sumX=tf.tile(tf.reshape(sumX,[n,1]),[1,numRNA])
     theta=tf.math.exp(logTheta) # assume the model is predicting log(theta)
-    if np.isnan(sumDnaLibs) or np.isnan(RnaLibs):
+    if sumDnaLibs is None or RnaLibs is None:
         libRatio = 1.0
     else:
         n=tf.shape(sumDnaLibs)[0]
