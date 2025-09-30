@@ -167,13 +167,11 @@ def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA,sumDnaLibs=None,RnaLibs=None)
     n=tf.shape(sumX)[0]
     sumX=tf.tile(tf.reshape(sumX,[n,1]),[1,numRNA])
     theta=tf.math.exp(logTheta) # assume the model is predicting log(theta)
-    if sumDnaLibs is None or RnaLibs is None:
-        libRatio = 1.0
-    else:
+    if not (sumDnaLibs is None or RnaLibs is None):
         n=tf.shape(sumDnaLibs)[0]
         sumDnaLibs=tf.tile(tf.reshape(sumDnaLibs,[n,1]),[1,numRNA])
-        libRatio=RnaLibs/sumDnaLibs
-    theta=theta*libRatio
+        libRatio=RnaLibs/(sumDnaLibs/numX)
+        theta=theta*libRatio
     LL=(sumX+alpha)*log(beta+numX)+logGam(Yj+sumX+alpha)+Yj*log(theta)\
         -logGam(sumX+alpha)-logGam(Yj+1)-(Yj+sumX+alpha)*log(theta+beta+numX)
     return tf.reduce_sum(LL,axis=1) # sum logLik across iid replicates
