@@ -15,7 +15,7 @@ from keras.layers import Conv1D, MaxPooling1D, AveragePooling1D
 from keras.layers import Dropout, Reshape, Dense, Activation, Flatten
 from keras.layers import BatchNormalization, InputLayer, Input, LSTM, GRU, Bidirectional, Add, Concatenate, LayerNormalization, MultiHeadAttention
 import keras_nlp
-from keras_nlp.layers import SinePositionEncoding
+from keras_nlp.layers import SinePositionEncoding, TransformerEncoder, RotaryEmbedding
 from keras import models
 from keras.models import Sequential, Model
 from keras.optimizers import Adam
@@ -368,13 +368,15 @@ def BuildModel(seqlen):
             
     # Optional attention layers
     if(config.NumAttn>0):
-        x=x+keras_nlp.layers.SinePositionEncoding()(x)
+        x=x+keras_nlp.layers.RotaryEmbedding(name="rotary_embedding")(x)
     for i in range(config.NumAttn):
         skip=x
-        x=LayerNormalization()(x)
-        x=MultiHeadAttention(num_heads=config.AttnHeads[i],
-                             key_dim=config.AttnKeyDim[i])(x,x)
-        x=Dropout(config.DropoutRate)(x)
+        x=LayerNormalization(name=f"layer_norm_{i}")(x)
+        x = TransformerEncoder(intermediate_dim=config.AttnKeyDim[i],
+                               num_heads=config.AttnHeads[i],
+                               dropout=config.DropoutRate,
+                               name=f"transformer_encoder_{i}")(x)
+        x=Dropout(config.DropoutRate, name=f"dropout_{i}")(x)
         if(config.AttnResidualSkip!=0):
             x=Add()([x,skip])
 

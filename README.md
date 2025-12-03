@@ -8,7 +8,7 @@ BlueSTARR: predicting effects of regulatory variants
 1. Create a new conda environment with Python 3.10. (Later versions may work but have not been tested.)
    ```bash
    # you can also use -n YourEnvName instead of -p /path/to/env
-   conda create -p /path/to/new/conda/env -c conda-forge python=3.10
+   conda create -p /path/to/new/conda/env -c conda-forge python=3.11
    ```
 2. Activate the conda environment you just created:
    ```bash
