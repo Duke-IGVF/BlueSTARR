@@ -1,9 +1,13 @@
 # BlueSTARR
 BlueSTARR: predicting effects of regulatory variants
 
-## Environment setup
+## Running BlueSTARR
 
-### Creating a conda environment from scratch
+Running the BlueSTARR code requires Python 3.10+ and the presence of a number of dependencies. These can be installed locally in the form of a conda environment, or alternatively use the Docker container automatically built and updated for the codebase.
+
+### Conda Environment Setup
+
+#### Creating a conda environment from scratch
 
 1. Create a new conda environment with Python 3.10. (Later versions may work but have not been tested.)
    ```bash
@@ -23,7 +27,7 @@ BlueSTARR: predicting effects of regulatory variants
    - [`requirements.txt`](requirements.txt)
    - [`non-tensorflow-reqs.txt`](non-tensorflow-reqs.txt)
 
-### (Alternative) Cloning a previously exported conda environment
+#### (Alternative) Cloning a previously exported conda environment
 
 You can “clone” (install every dependency and package at the exact same version, whether there’s a more recent compatible one or not) an existing conda environment by first exporting the configuration of an existing one (either specify it using -n/--name or -p/--prefix, or activate it first) into a file like so:
 ```
@@ -39,6 +43,12 @@ pip install "git+https://github.com/Duke-GCB/majoros-python-utils.git"
 ```
 
 _**Caveat:** Although this used to result in a working conda environment at least with conda v4.x (which is fairly old at this point), the conda version provided by a more modern miniconda (which can also be user-installed on an HPC) apparently now fails at successfully creating the environment with this approach. Consider using the from-scratch method._
+
+### Using the Docker Container
+
+A Docker container image is automatically built and updated from the [provided Dockerfile](Dockerfile) when the code in this repository changes or a new release is created.
+
+The container images are [available from the GitHub package registry](https://github.com/Duke-IGVF/BlueSTARR/pkgs/container/bluestarr). Available tags (latest, as well as major, minor and patch releases) and the command for pulling the container image can be found there.
 
 ### Fixing TensorRT not found issue
 
