@@ -67,3 +67,13 @@ If TensorRT is installed (you can try `import tensorrt` and `import tensorrt_lib
   bash tensorrt-fix.sh
   ```
   You need to do this only _once_ for a given conda environment.
+
+## Preparing Input Data for Training BlueSTARR
+
+The BlueSTARR model is trained on STARR-seq data, specifically DNA and RNA read counts. Typically these are obtained from the experiment in the form of [FASTQ](https://en.wikipedia.org/wiki/FASTQ_format). The FASTQ files are first converted to [BigWig](https://genome.ucsc.edu/goldenpath/help/bigWig.html) format, and then in several aggregation and filtering steps to the count tables.
+
+### Processing STARRseq FASTQ files to BigWig format
+
+To process FASTQ files into BigWig files, we use the [STARR-seq_pipeline](https://github.com/ReddyLab/cwl-pipelines/tree/main/v1.0/STARR-seq_pipeline) defined in [Common Workflow Language](https://www.commonwl.org) (CWL).
+
+To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](https://www.commonwl.org/user_guide/introduction/prerequisites.html#cwl-runner)).
