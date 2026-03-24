@@ -76,4 +76,15 @@ The BlueSTARR model is trained on STARR-seq data, specifically DNA and RNA read 
 
 To process FASTQ files into BigWig files, we use the [STARR-seq_pipeline](https://github.com/ReddyLab/cwl-pipelines/tree/main/v1.0/STARR-seq_pipeline) defined in [Common Workflow Language](https://www.commonwl.org) (CWL).
 
-To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](https://www.commonwl.org/user_guide/introduction/prerequisites.html#cwl-runner)).
+To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](https://www.commonwl.org/user_guide/introduction/prerequisites.html#cwl-runner).
+
+### Processing STARRseq BigWig files to count data and FASTA sequences
+
+### Downsampling
+
+In its current implementation, the BlueSTARR training code loads the full dataset into memory prior to commencing the model training loop.  If this requires more memory than available by your compute resources, you can downsample the dataset.
+
+We employ two downsampling strategies that differ in the acceptance probability for each record of counts (= each training sequence):
+
+- **Unbiased downsampling:** each sequence is accepted with a fixed probability _N/M_, where _N_ is the desired sample size and _M_ is the total number of records being sampled. See the script [`downsample-nonuniform.py` in BlueSTARR_Evaluation_K562](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_K562/blob/main/leave-one-out/BlueSTARR/leave-one-out/downsampling/downsample-nonuniform.py).
+- **Biased downsampling:** the acceptance probability is a function of the estimated frequency (or kernel density) distribution of the observed activation signal $\theta$ (RNA over DNA). The script [`downsample.py` in BlueSTARR_Evaluation_K562](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_K562/blob/main/leave-one-out/BlueSTARR/leave-one-out/downsampling/downsample.py) uses the empirical histogram-based PDF, where the acceptance probability for a record is $min(1, N/(M*B*p_i))$, where $p_i$ is the observed proportion of records in histogram bin _i_ into which the observed value of $\theta$ falls. The script [`downsample-biased.py` in BlueSTARR_Evaluation_A549](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_A549/blob/main/full-set/BlueSTARR/downsample-biased.py) implements other functions, including PDFs and CDFs of lognormal distributions as well as powers of the lognormal CDF. Their implementation is adapted from [`Mixture-biased-sampling.ipynb` in BlueSTARR-viz](https://github.com/Duke-IGVF/BlueSTARR-viz/blob/main/sim/Mixture-biased-sampling.ipynb), where the activation-dependent acceptance probabilities and resulting enrichments in positive activations are also visualized.
