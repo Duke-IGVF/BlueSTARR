@@ -80,7 +80,7 @@ To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](ht
 
 ### Processing STARRseq BigWig files to count data and FASTA sequences
 
-For generating the counts data file and FASTA sequences for training the model, the [WGSTARR_data_preprocessing notebook](https://github.com/Duke-IGVF/BlueSTARR/edit/notebook_readme/README.md#:~:text=WGSTARR_data_preprocessing.ipynb) was used. For each 300 bp training sequence, count files were generated from the per-replicate bigWigs produced in the previous step. These files contained signal values normalized by library size, for every replicate of both the input and output libraries.
+For generating the counts data file and FASTA sequences for training the model, the [WGSTARR_data_preprocessing notebook](WGSTARR_data_preprocessing.ipynb) was used. For each 300 bp training sequence, count files were generated from the per-replicate bigWigs produced in the previous step. These files contained signal values normalized by library size, for every replicate of both the input and output libraries.
 
 ### Downsampling
 
