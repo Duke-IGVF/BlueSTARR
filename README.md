@@ -82,6 +82,24 @@ To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](ht
 
 For generating the counts data file and FASTA sequences for training the model, the [WGSTARR_data_preprocessing notebook](WGSTARR_data_preprocessing.ipynb) was used. For each 300 bp training sequence, count files were generated from the per-replicate bigWigs produced in the previous step. These files contained signal values normalized by library size, for every replicate of both the input and output libraries.
 
+### Removing paralogous sequences
+
+Sequences in the training set that are paralogous (highly similar) to sequences in the validation and test sets can lead to data leakage (and thus an overestimation of trained model accuracy). To reduce the potential for data leakage, paralogous sequences need to be identified and removed.
+
+We used BLASTN to identify sequences with at least 100 consecutive bases in common and greater than 90% sequence identity:
+
+- Build the blast database from all sequences:
+  ```
+  makeblastdb -in <input-fasta> -dbtype nucl -out <blast-database> -hash_index
+  ```
+- Query sequences against database:
+  ```
+  blastn -query <input-fasta> -db <blast-database> -out <output-alignmnt-table> \
+         -evalue 1e-5 -outfmt 6 -sum_stats true -perc_identity 90.0 -word_size 100
+  ```
+
+See script [`remove_paralogs.py` in BlueSTARR_Evaluation_K562](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_K562/blob/main/leave-one-out/BlueSTARR/leave-one-out/remove_paralogs.py) for using the resulting alignment table to remove paralogous sequences from the training set.
+
 ### Downsampling
 
 In its current implementation, the BlueSTARR training code loads the full dataset into memory prior to commencing the model training loop.  If this requires more memory than available by your compute resources, you can downsample the dataset.
