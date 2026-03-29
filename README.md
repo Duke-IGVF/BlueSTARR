@@ -97,7 +97,7 @@ We used BLASTN to identify sequences with at least 100 consecutive bases in comm
   blastn -query <input-fasta> -db <blast-database> -out <output-alignmnt-table> \
          -evalue 1e-5 -outfmt 6 -sum_stats true -perc_identity 90.0 -word_size 100
   ```
-- Process the resulting alignment table to create table of paralogous sequence pairs: see script [`clean_all_aligned.py` in BlueSTARR_Evaluation_K562](https://github.com/yutiachen5/BlueSTARR_Evaluation_K562/blob/main/leave-one-out/BlueSTARR/leave-one-out/clean_all_aligned.py)
+- Process the resulting alignment table to create table of paralogous sequence pairs: see script [`clean_all_aligned.py` in BlueSTARR_Evaluation_K562](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_K562/blob/main/leave-one-out/BlueSTARR/leave-one-out/clean_all_aligned.py)
 - Use table of paralogous sequence pairs to remove paralogous sequence pairs (along with those matching an [MPRA dataset](https://doi.org/10.1038/s41467-019-11526-w) used for accuracy evaluation) from training data: see script [`remove_paralogs.py` in BlueSTARR_Evaluation_K562](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_K562/blob/main/leave-one-out/BlueSTARR/leave-one-out/remove_paralogs.py).
 
 ### Downsampling
