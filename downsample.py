@@ -73,12 +73,16 @@ def computeAccept(distr,N,M,B):
         alpha.append(a)
     return alpha
 
+
+
 def nextCountsLine(line,DNA_REPS,RNA_REPS):
     fields=line.rstrip().split()
-    fields=[int(x) for x in fields]
+    # fields=[int(x) for x in fields]
+    fields=[float(x) for x in fields]
     DNA=fields[:DNA_REPS]; RNA=fields[DNA_REPS:]
     sumDNA=sum(DNA);  sumRNA=sum(RNA)
-    naiveTheta=(sumRNA+RNA_REPS)/(sumDNA+DNA_REPS)
+    # naiveTheta=(sumRNA+RNA_REPS)/(sumDNA+DNA_REPS)
+    naiveTheta=(sumRNA/RNA_REPS)/(sumDNA/DNA_REPS)
     return math.log(naiveTheta)
 
 def getBin(distr,theta):
@@ -100,7 +104,7 @@ def countCounts(countsFile):
 # main()
 #=========================================================================
 if(len(sys.argv)!=8):
-    exit(ProgramName.get()+" <in:naive-thetas.txt> <in:fasta.gz> <in:counts.txt.gz> <#bins> <desired-sample-size> <out-dir> <train|test|validation>")
+    exit(ProgramName.get()+" <in:naive-thetas.txt> <in:fasta> <in:counts.txt.gz> <#bins> <desired-sample-size> <out-dir> <train|test|validation>")
 (thetasFile,fastaFile,countsFile,numBins,N,outDir,fileLabel)=sys.argv[1:]
 numBins=int(numBins)
 N=int(N)
@@ -139,4 +143,3 @@ for line in IN_COUNTS:
         print(line,end="",file=OUT_COUNTS)
         fastaWriter.addToFasta(defline,sequence,OUT_FASTA)
 IN_COUNTS.close(); OUT_COUNTS.close(); OUT_FASTA.close()
-
