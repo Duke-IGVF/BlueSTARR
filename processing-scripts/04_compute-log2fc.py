@@ -24,6 +24,18 @@ def parse_args() -> argparse.Namespace:
         help="Minimum count threshold to match file pattern (default: 100)",
     )
     parser.add_argument(
+        "--num-input-reps",
+        type=int,
+        default=3,
+        help="Number of DNA (input) replicates (default: 3)",
+    )
+    parser.add_argument(
+        "--pseudocount",
+        type=float,
+        default=0.001,
+        help="Pseudocount added to CPM values before log2 to avoid log(0) (default: 0.001)",
+    )
+    parser.add_argument(
         "--input-dir",
         default=".",
         help="Directory to search for input file when using --min-count-threshold (default: current directory)",
@@ -71,13 +83,15 @@ def main() -> None:
     )
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    rna_start = 3 + args.num_input_reps
+
     df = pd.read_csv(input_path, sep="\t")
     df = df.astype(int, errors="ignore")
     df.iloc[:, 3:] = df.iloc[:, 3:] / df.iloc[:, 3:].sum() * 1e6
 
     log2fc_tmp = np.log2(
-        (0.001 + df.iloc[:, 6:].mean(axis=1))
-        / (0.001 + df.iloc[:, 3:6].mean(axis=1))
+        (args.pseudocount + df.iloc[:, rna_start:].mean(axis=1))
+        / (args.pseudocount + df.iloc[:, 3:rna_start].mean(axis=1))
     )
 
     df = pd.read_csv(input_path, sep="\t")

@@ -4,6 +4,7 @@ set -euo pipefail
 
 input_file=""
 min_count_threshold=100
+min_count_threshold_set=false
 input_dir="."
 output_dir=""
 genome_file=""
@@ -39,6 +40,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --min-count-threshold)
             min_count_threshold=${2:-}
+            min_count_threshold_set=true
             shift 2
             ;;
         --input-dir)
@@ -71,7 +73,7 @@ if [[ -z "$genome_file" ]]; then
     exit 1
 fi
 
-if [[ -n "$input_file" && "$min_count_threshold" != "100" ]]; then
+if [[ -n "$input_file" && "$min_count_threshold_set" == "true" ]]; then
     echo "Use either --input-file or --min-count-threshold, not both." >&2
     usage >&2
     exit 1
@@ -111,6 +113,9 @@ mkdir -p "$output_abs_dir"
 
 intermediate_file="${output_abs_dir}/${base_no_txt}.sequences.fa"
 output_file="${output_abs_dir}/${base_no_txt}.sequence.txt.gz"
+
+# Remove the intermediate FASTA file on exit (success, error, or interrupt)
+trap 'rm -f "$intermediate_file"' EXIT
 
 tail -n+2 "$input_path" \
 | cut -f1-3 \
