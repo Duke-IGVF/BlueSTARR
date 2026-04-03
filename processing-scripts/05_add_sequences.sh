@@ -15,8 +15,9 @@ Usage: 05_add_sequences.sh --genome-file GENOME [--input-file FILE | --min-count
 
 Extract the windows sequences from the given genome file and add them as
 a new column to the input count (plus log2FC) table. The file with the
-extracted sequences is saved as <input_file_base>.sequences.fa, and the
-final output is saved as <input_file_base>.sequence.txt.gz.
+extracted sequences is temporarily saved as <input_file_base>.sequences.fa
+but is removed after the script finishes.
+The final output is saved as <input_file_base>.sequence.txt.gz.
 
 Required arguments:
   --genome-file FILE            Reference genome FASTA (.fna/.fa)
