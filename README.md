@@ -80,7 +80,17 @@ To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](ht
 
 ### Processing STARR-seq BigWig files to count data and FASTA sequences
 
-For generating the counts data file and FASTA sequences for training the model, the [WGSTARR_data_preprocessing notebook](WGSTARR_data_preprocessing.ipynb) was used. For each 300 bp training sequence, count files were generated from the per-replicate bigWigs produced in the previous step. These files contained signal values normalized by library size, for every replicate of both the input and output libraries.
+The STARR-seq BigWig files resulting from the previous step can be transformed to the  BlueSTARR training input table format of DNA and RNA replicate counts per sequence bin through the scripts in the [`processing-scripts`](processing-scripts) directory, following the order indicated by the numeric prefix:
+
+1. `01_avg-coverage-per-window.sh`: Summarizes STARR-seq input (DNA) and output (RNA) data in BigWig files by overlapping windows (by default 300bp length, with50bp step). Outputs bedgraph format.
+2. `02_filter-common-windows.py`: Finds windows shared across all matching bedgraph replicates and writes filtered per-replicate bedgraph files.
+3. `03_merge-dna-rna.sh`: Merges across DNA and RNA samples and replicates, selecting only windows with enough counts summed over replicates. Outputs bedgraph format.
+4. `04_compute-log2fc.py`: Computes log2 fold change (RNA/DNA) from combined input/output bedgraph and adds it as a column.
+5. `05_add_sequences.sh`: Extracts the windows' sequences from a reference genome and adds them as a new column to the counts (plus log2FC) table.
+
+Each of these scripts accepts a `--help` command-line argument to print usage information.
+
+**Dependencies**: Scripts 02 and 03 require Python 3 (with NumPy and Pandas installed). Script 05 requires [bedtools](https://bedtools.readthedocs.io/en/latest/), and script 01 requires [bwtool](https://github.com/CRG-Barcelona/bwtool). If compiling bwtool from source runs into a compile time error, follow [the instructions reported here](https://github.com/CRG-Barcelona/bwtool/issues/49#issuecomment-698980749).
 
 ### Removing paralogous sequences
 
