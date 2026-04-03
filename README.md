@@ -72,13 +72,13 @@ If TensorRT is installed (you can try `import tensorrt` and `import tensorrt_lib
 
 The BlueSTARR model is trained on STARR-seq data, specifically DNA and RNA read counts. Typically these are obtained from the experiment in the form of [FASTQ](https://en.wikipedia.org/wiki/FASTQ_format). The FASTQ files are first converted to [BigWig](https://genome.ucsc.edu/goldenpath/help/bigWig.html) format, and then in several aggregation and filtering steps to the count tables.
 
-### Processing STARRseq FASTQ files to BigWig format
+### Processing STARR-seq FASTQ files to BigWig format
 
 To process FASTQ files into BigWig files, we use the [STARR-seq_pipeline](https://github.com/ReddyLab/cwl-pipelines/tree/main/v1.0/STARR-seq_pipeline) defined in [Common Workflow Language](https://www.commonwl.org) (CWL).
 
 To execute CWL workflows, you will need a CWL engine, for example [`cwltool`](https://www.commonwl.org/user_guide/introduction/prerequisites.html#cwl-runner).
 
-### Processing STARRseq BigWig files to count data and FASTA sequences
+### Processing STARR-seq BigWig files to count data and FASTA sequences
 
 For generating the counts data file and FASTA sequences for training the model, the [WGSTARR_data_preprocessing notebook](WGSTARR_data_preprocessing.ipynb) was used. For each 300 bp training sequence, count files were generated from the per-replicate bigWigs produced in the previous step. These files contained signal values normalized by library size, for every replicate of both the input and output libraries.
 
