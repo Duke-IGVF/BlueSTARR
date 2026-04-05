@@ -15,7 +15,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Split a sequence-augmented BlueSTARR TSV table into a FASTA file "
-            "and a DNA and RNA counts table."
+            "and a DNA and RNA counts table. Both outputs are created as gzip-compressed files."
         )
     )
     parser.add_argument(
