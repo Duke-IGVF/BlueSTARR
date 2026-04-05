@@ -91,7 +91,7 @@ The STARR-seq BigWig files resulting from the previous step can be transformed t
 
 Each of these scripts accepts a `--help` command-line argument to print usage information.
 
-**Dependencies**: Scripts 02, 04, and 06 require Python 3 (with NumPy and Pandas installed). Script 05 requires [bedtools](https://bedtools.readthedocs.io/en/latest/), and script 01 requires [bwtool](https://github.com/CRG-Barcelona/bwtool). If compiling bwtool from source runs into a compile time error, follow [the instructions reported here](https://github.com/CRG-Barcelona/bwtool/issues/49#issuecomment-698980749).
+**Dependencies**: Script 02 requires Python 3 with Pandas installed. Script 04 requires Python 3 with NumPy and Pandas installed. Script 06 requires only Python 3. Script 05 requires [bedtools](https://bedtools.readthedocs.io/en/latest/), and script 01 requires [bwtool](https://github.com/CRG-Barcelona/bwtool). If compiling bwtool from source runs into a compile time error, follow [the instructions reported here](https://github.com/CRG-Barcelona/bwtool/issues/49#issuecomment-698980749).
 
 ### Removing paralogous sequences
 
