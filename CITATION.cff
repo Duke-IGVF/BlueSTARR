@@ -26,7 +26,7 @@ identifiers:
     value: "https://github.com/Duke-IGVF/BlueSTARR/releases/tag/v0.3.0"
   - description: "The GitHub URL of the commit tagged with v0.3.0."
     type: url
-    value: "https://github.com/Duke-IGVF/BlueSTARR/tree/<commit-hash>"
+    value: "https://github.com/Duke-IGVF/BlueSTARR/tree/350154748d9373306da5008ea34e31a26f9a1b7f"
 keywords:
   - "STARR-seq"
   - "enhancer activity"
@@ -35,7 +35,7 @@ keywords:
 license: MIT
 message: "If you find this software helpful in your research, please cite our paper."
 repository-code: "https://github.com/Duke-IGVF/BlueSTARR"
-title: "BlueSTARR: predicting effects of non-coding regulatory variants"
+title: "BlueSTARR: predicting regulatory effects of non-coding variants"
 version: v0.3.0
 doi: 10.5281/zenodo.19444440    # version agnostic DOI
 type: software
