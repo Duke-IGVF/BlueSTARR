@@ -1,0 +1,74 @@
+abstract: "BlueSTARR is a deep-learning model and training framework for predicting regulatory activation (or suppression) from genomic non-coding sequences based on the expression activation observed in STARR-seq experiments, a type of high-throughput reporter assay."
+authors:
+- family-names: Lapp
+  given-names: Hilmar
+  orcid: "https://orcid.org/0000-0001-9107-0714"
+- family-names: Chen
+  given-names: Yutian
+  orcid: "https://orcid.org/0009-0008-1205-0618"
+- family-names: Venukuttan
+  given-names: "Revathy"
+  orcid: "https://orcid.org/0009-0005-6697-3854"
+- family-names: Li
+  given-names: "Boyao"
+  orcid: "https://orcid.org/0000-0002-4092-2902"
+- family-names: Thomson
+  given-names: Alexander
+  orcid: "https://orcid.org/0009-0006-5080-587X"
+- family-names: Majoros
+  given-names: "William H."
+  orcid: "https://orcid.org/0000-0001-7284-9335"
+cff-version: 1.2.0
+date-released: "2026-04-06"
+identifiers:
+  - description: "The GitHub release URL of tag v0.3.0."
+    type: url
+    value: "https://github.com/Duke-IGVF/BlueSTARR/releases/tag/v0.3.0"
+  - description: "The GitHub URL of the commit tagged with v0.3.0."
+    type: url
+    value: "https://github.com/Duke-IGVF/BlueSTARR/tree/<commit-hash>"
+keywords:
+  - STARR-seq
+  - "enhancer activity"
+  - "non-coding variants"
+  - "deep learning"
+license:
+message: "If you find this software helpful in your research, please cite our paper."
+repository-code: "https://github.com/Duke-IGVF/BlueSTARR"
+title: "BlueSTARR: predicting effects of non-coding regulatory variants"
+version: v0.3.0
+doi: <DOI from Zenodo>    # version agnostic DOI
+type: software
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Venukuttan 
+      given-names: Revathy
+    - family-names: Doty
+      given-names: Richard
+    - family-names: Thomson
+      given-names: Alexander
+    - family-names: Chen
+      given-names: Yutian
+    - family-names: Li
+      given-names: Boyao
+    - family-names: Duan
+      given-names: Yuncheng
+    - family-names: Barrera
+      given-names: Alejandro
+    - family-names: Dura
+      given-names: Katherine
+    - family-names: Ko
+      given-names: Kuei-Yueh
+    - family-names: Lapp
+      given-names: Hilmar
+    - family-names: Reddy
+      given-names: "Timothy E."
+    - family-names: Allen
+      given-names: "Andrew S."
+    - family-names: Majoros
+      given-names: "William H."
+  title: "Modeling gene regulatory perturbations via deep learning from high-throughput reporter assays"
+  year: 2026
+  journal: bioRxiv
+  doi: 10.64898/2026.03.27.714770
