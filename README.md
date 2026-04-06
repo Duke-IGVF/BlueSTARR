@@ -1,5 +1,10 @@
-# BlueSTARR
-BlueSTARR: predicting effects of regulatory variants
+[![DOI](https://zenodo.org/badge/801252410.svg)](https://zenodo.org/badge/latestdoi/801252410)
+
+# BlueSTARR: predicting regulatory effects of non-coding variants
+
+BlueSTARR uses deep-learning for predicting regulatory activation (or suppression) from 300, 600, and 1k base-long genomic non-coding sequences. The BlueSTARR model is trained on the expression activation observed in STARR-seq experiments, a type of high-throughput reporter assay. The quantitative activation signal for training is estimated from RNA over DNA read count ratios.
+
+The architecture of the deep-learning model is fully configurable. See paper for evaluation of different architectures and hyperparameters.
 
 ## Running BlueSTARR
 
@@ -121,3 +126,33 @@ We employ two downsampling strategies that differ in the acceptance probability 
 - **Biased downsampling:** the acceptance probability is a function of the estimated frequency (or kernel density) distribution of the observed activation signal $\theta$ (RNA over DNA).
     * The script [`downsample.py`](downsample.py) uses the empirical histogram-based PDF, where the acceptance probability for a record is $\min(1, N/(M B p_i))$, where $p_i$ is the observed proportion of records in histogram bin $i$ ($i \in \\{1,\ldots,B\\}$) into which the observed value of $\theta$ falls.
     * The script [`downsample-biased.py` in BlueSTARR_Evaluation_A549](https://github.com/Duke-IGVF/BlueSTARR_Evaluation_A549/blob/main/full-set/BlueSTARR/downsample-biased.py) implements other functions, including PDFs and CDFs of lognormal distributions as well as powers of the lognormal CDF. Their implementation is adapted from [`Mixture-biased-sampling.ipynb` in BlueSTARR-viz](https://github.com/Duke-IGVF/BlueSTARR-viz/blob/main/sim/Mixture-biased-sampling.ipynb), where the activation-dependent acceptance probabilities and resulting enrichments in positive activations are also visualized.
+
+## License
+
+BlueSTARR code is available under the MIT license. Pre-trained [BlueSTARR models and weights](https://huggingface.co/majoroslab/BlueSTARR) are also available under the MIT license.
+
+## Citation and Acknowledgements
+
+If you use this code, please cite the following paper:
+
+> Venukuttan R, Doty R, Thomson A, Chen Y, Li B, Duan Y, Barrera A, Dura K, Ko K-Y, Lapp H, Reddy TE, Allen AS, Majoros WH (2026) Modeling gene regulatory perturbations via deep learning from high-throughput reporter assays. bioRxiv, :2026.03.27.714770. https://doi.org/10.64898/2026.03.27.714770
+
+In BibTeX:
+
+```bib
+@article {Venukuttan2026.03,
+    author = {Venukuttan, Revathy and Doty, Richard and Thomson, Alexander and Chen, Yutian and Li, Boyao and Duan, Yuncheng and Barrera, Alejandro and Dura, Katherine and Ko, Kuei-Yueh and Lapp, Hilmar and Reddy, Timothy E and Allen, Andrew S and Majoros, William H},
+    title = {Modeling gene regulatory perturbations via deep learning from high-throughput reporter assays},
+    elocation-id = {2026.03.27.714770},
+    year = {2026},
+    doi = {10.64898/2026.03.27.714770},
+    publisher = {Cold Spring Harbor Laboratory},
+    URL = {https://www.biorxiv.org/content/early/2026/03/31/2026.03.27.714770},
+    eprint = {https://www.biorxiv.org/content/early/2026/03/31/2026.03.27.714770.full.pdf},
+    journal = {bioRxiv}
+}
+```
+
+BlueSTARR is inspired by and was originally derived from DeepSTARR. If you use BlueSTARR with a deep-learning network architecture substantially similar to one pioneered in DeepSTARR, please also cite DeepSTARR:
+
+> Almeida BP de, Reiter F, Pagani M, Stark A (2022) DeepSTARR predicts enhancer activity from DNA sequence and enables the de novo design of synthetic enhancers. Nature Genetics, 54(5):613–624. https://doi.org/10.1038/s41588-022-01048-5
