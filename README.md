@@ -85,12 +85,13 @@ The STARR-seq BigWig files resulting from the previous step can be transformed t
 1. `01_avg-coverage-per-window.sh`: Summarizes STARR-seq input (DNA) and output (RNA) data in BigWig files by overlapping windows (by default 300bp length, with50bp step). Outputs bedgraph format.
 2. `02_filter-common-windows.py`: Finds windows shared across all matching bedgraph replicates and writes filtered per-replicate bedgraph files.
 3. `03_merge-dna-rna.sh`: Merges across DNA and RNA samples and replicates, selecting only windows with enough counts summed over replicates. Outputs bedgraph format.
-4. `04_compute-log2fc.py`: Computes log2 fold change (RNA/DNA) from combined input/output bedgraph and adds it as a column.
+4. `04_compute-log2fc.py`: Computes log2 fold change (RNA/DNA) from combined input/output bedgraph and adds it as a column. (This is optional.)
 5. `05_add_sequences.sh`: Extracts the windows' sequences from a reference genome and adds them as a new column to the counts (plus log2FC) table.
+6. `06_split_fasta_and_counts.py`: Splits the sequence-augmented table into a FASTA file and a separate DNA/RNA replicate counts table.
 
 Each of these scripts accepts a `--help` command-line argument to print usage information.
 
-**Dependencies**: Scripts 02 and 04 require Python 3 (with NumPy and Pandas installed). Script 05 requires [bedtools](https://bedtools.readthedocs.io/en/latest/), and script 01 requires [bwtool](https://github.com/CRG-Barcelona/bwtool). If compiling bwtool from source runs into a compile time error, follow [the instructions reported here](https://github.com/CRG-Barcelona/bwtool/issues/49#issuecomment-698980749).
+**Dependencies**: Script 02 requires Python 3 with Pandas installed. Script 04 requires Python 3 with NumPy and Pandas installed. Script 06 requires only Python 3. Script 05 requires [bedtools](https://bedtools.readthedocs.io/en/latest/), and script 01 requires [bwtool](https://github.com/CRG-Barcelona/bwtool). If compiling bwtool from source runs into a compile time error, follow [the instructions reported here](https://github.com/CRG-Barcelona/bwtool/issues/49#issuecomment-698980749).
 
 ### Removing paralogous sequences
 
