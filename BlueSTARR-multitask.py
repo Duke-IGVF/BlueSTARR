@@ -172,6 +172,8 @@ def logLik(sumX,numX,Yj,logTheta,alpha,beta,numRNA,sumDnaLibs=None,RnaLibs=None)
         sumDnaLibs=tf.tile(tf.reshape(sumDnaLibs,[n,1]),[1,numRNA])
         libRatio=RnaLibs/(sumDnaLibs/numX)
         theta=theta*libRatio
+    numX = 1 ## as per bmajoros/BlueSTARR#d95d3b4eaf35d799f00dfc85e74306d070328c6e
+             ## for calculating log-likelihood
     LL=(sumX+alpha)*log(beta+numX)+logGam(Yj+sumX+alpha)+Yj*log(theta)\
         -logGam(sumX+alpha)-logGam(Yj+1)-(Yj+sumX+alpha)*log(theta+beta+numX)
     return tf.reduce_sum(LL,axis=1) # sum logLik across iid replicates
