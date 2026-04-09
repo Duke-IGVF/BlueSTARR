@@ -156,3 +156,7 @@ In BibTeX:
 BlueSTARR is inspired by and was originally derived from DeepSTARR. If you use BlueSTARR with a deep-learning network architecture substantially similar to one pioneered in DeepSTARR, please also cite DeepSTARR:
 
 > Almeida BP de, Reiter F, Pagani M, Stark A (2022) DeepSTARR predicts enhancer activity from DNA sequence and enables the de novo design of synthetic enhancers. Nature Genetics, 54(5):613–624. https://doi.org/10.1038/s41588-022-01048-5
+
+## Funding
+
+This work was supported by the National Institute of General Medical Sciences (NIGMS) of the National Institutes of Health (NIH) under award number 1R35-GM150404 to W.H.M., and National Human Genome Research Institute (NHGRI) of NIH 5U01-HG011967, and NHGRI 5UM1-HG012053. Content is solely the responsibility of the authors.
