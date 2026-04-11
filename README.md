@@ -10,6 +10,10 @@ The architecture of the deep-learning model is fully configurable. See paper for
 
 Running the BlueSTARR code requires Python 3.10+ and the presence of a number of dependencies. These can be installed locally in the form of a conda environment, or alternatively use the Docker container automatically built and updated for the codebase.
 
+### Pretrained models for inference
+
+Pretrained BlueSTARR models are available from Hugging Face under [majoroslab/BlueSTARR](https://huggingface.co/majoroslab/BlueSTARR).
+
 ### Conda Environment Setup
 
 #### Creating a conda environment from scratch
